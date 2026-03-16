@@ -13,16 +13,13 @@ const relativePathRegex = /\\/g
  * Decompress a tar or tar.gz buffer.
  * Uses node-tar to extract into a temporary directory, then reads results.
  */
-export async function decompressTar(
-  buffer: Buffer,
-  isGzipped: boolean,
-): Promise<DecompressedFile[]> {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uvdc-'))
+export async function decompressTar(buffer: Buffer, isGzipped: boolean): Promise<DecompressedFile[]> {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uvdc-'))
 
   try {
     await new Promise<void>((resolve, reject) => {
       const stream = Readable.from(buffer)
-      const extractStream = tarExtract({ cwd: tmpDir, strip: 0 })
+      const extractStream = tarExtract({ cwd: tempDir, strip: 0 })
 
       let pipeline: NodeJS.ReadableStream = stream
       if (isGzipped) {
@@ -35,19 +32,19 @@ export async function decompressTar(
         .on('error', reject)
     })
 
-    return readDirectory(tmpDir, tmpDir)
+    return readDirectory(tempDir, tempDir)
   }
   finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true })
+    fs.rmSync(tempDir, { recursive: true, force: true })
   }
 }
 
-function readDirectory(dir: string, root: string): DecompressedFile[] {
+function readDirectory(directory: string, root: string): DecompressedFile[] {
   const results: DecompressedFile[] = []
-  const entries = fs.readdirSync(dir, { withFileTypes: true })
+  const entries = fs.readdirSync(directory, { withFileTypes: true })
 
   for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name)
+    const fullPath = path.join(directory, entry.name)
     const relativePath = path.relative(root, fullPath).replace(relativePathRegex, '/')
 
     if (entry.isSymbolicLink()) {

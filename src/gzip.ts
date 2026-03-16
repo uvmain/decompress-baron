@@ -8,9 +8,7 @@ import { createGunzip } from 'node:zlib'
  * decompressed data. The path is set to "decompressed" because gzip
  * carries no filename metadata.
  */
-export async function decompressGzip(
-  buffer: Buffer,
-): Promise<DecompressedFile[]> {
+export async function decompressGzip(buffer: Buffer): Promise<DecompressedFile[]> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = []
     const gunzip = createGunzip()
@@ -27,6 +25,6 @@ export async function decompressGzip(
           },
         ])
       })
-      .on('error', (err: Error) => reject(err))
+      .on('error', (error: Error) => reject(error))
   })
 }

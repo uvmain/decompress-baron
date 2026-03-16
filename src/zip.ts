@@ -3,16 +3,15 @@ import { Buffer } from 'node:buffer'
 import yauzl from 'yauzl'
 
 const pathRegex = /\/$/
+
 /**
  * Decompress a zip buffer using yauzl.
  */
-export async function decompressZip(
-  buffer: Buffer,
-): Promise<DecompressedFile[]> {
+export async function decompressZip(buffer: Buffer): Promise<DecompressedFile[]> {
   return new Promise((resolve, reject) => {
-    yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipfile) => {
-      if (err || !zipfile) {
-        return reject(err ?? new Error('Failed to open zip'))
+    yauzl.fromBuffer(buffer, { lazyEntries: true }, (error, zipfile) => {
+      if (error || !zipfile) {
+        return reject(error ?? new Error('Failed to open zip'))
       }
 
       const files: DecompressedFile[] = []
@@ -33,12 +32,11 @@ export async function decompressZip(
         }
 
         // Check for symlink via external attributes (Unix symlink = 0xA0)
-        const isSymlink
-          = (entry.externalFileAttributes >>> 16 & 0xF000) === 0xA000
+        const isSymlink = (entry.externalFileAttributes >>> 16 & 0xF000) === 0xA000
 
-        zipfile.openReadStream(entry, (err2, readStream) => {
-          if (err2 || !readStream) {
-            return reject(err2 ?? new Error('Failed to read zip entry'))
+        zipfile.openReadStream(entry, (error2, readStream) => {
+          if (error2 || !readStream) {
+            return reject(error2 ?? new Error('Failed to read zip entry'))
           }
 
           const chunks: Buffer[] = []
