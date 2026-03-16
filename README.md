@@ -2,8 +2,6 @@
 
 Decompress **gzip**, **tar**, **tar.gz**, and **zip** archives in Node.js.
 
-Fully typed — ships with `.d.ts` declarations out of the box.
-
 ## Install
 
 ```bash
@@ -27,36 +25,21 @@ for (const file of files) {
 You can also pass a file path directly instead of a `Buffer`:
 
 ```ts
+import fs from 'node:fs'
 import { decompress } from 'decompress-baron'
 
-const files = await decompress('./archive.tar.gz')
-```
-
-### Filtering
-
-Pass an `options` object with a `filter` function to include only the entries you care about:
-
-```ts
-const files = await decompress(buffer, {
-  filter: file => file.path.endsWith('.js'),
+const files = await decompress(compressedFilePath, {
+  filter: (file) => {
+    return file.path.includes('test') || file.data.toString().includes('test')
+  },
 })
+
+for (const file of files) {
+  fs.writeFileSync(`./${file.path}`, file.data)
+}
 ```
 
-```ts
-const files = await decompress(buffer, {
-  filter: file => file.path.includes('caddy'),
-})
-```
-
-### Default export
-
-A default export is also available:
-
-```ts
-import decompress from 'decompress-baron'
-```
-
-## API
+## Types
 
 ### `decompress(input, options?)`
 
@@ -68,11 +51,7 @@ Type: `Buffer | string`
 
 The archive data as a `Buffer`, or a file path as a `string`. When a string is provided, the file is read into a buffer automatically.
 
-The format is detected automatically from magic bytes — gzip (`1f 8b`), zip (`50 4b 03 04`), and tar (`ustar` at offset 257). Gzip buffers are inspected further to determine whether they wrap a tar archive (tar.gz) or are plain gzip.
-
-If the buffer does not match any known format, an empty array is returned.
-
-Throws `TypeError` if `input` is not a `Buffer` or `string`.
+The format is detected automatically from magic bytes. If the buffer does not match any known format, an empty array is returned.
 
 #### `options`
 
