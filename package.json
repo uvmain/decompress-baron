@@ -1,7 +1,7 @@
 {
   "name": "decompress-baron",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "decompress gzip, zip and tar.gz files",
   "author": "",
   "license": "ISC",
@@ -27,14 +27,14 @@
     "pretest": "npm run build"
   },
   "dependencies": {
-    "tar": "^7.5.11",
-    "yauzl": "^3.2.1"
+    "tar": "^7.5.16",
+    "yauzl": "^3.4.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.7.2",
-    "@types/node": "^25.5.0",
-    "@types/yauzl": "^2.10.3",
-    "eslint": "^10.0.3",
-    "typescript": "^5.9.3"
+    "@antfu/eslint-config": "^9.0.0",
+    "@types/node": "^25.9.3",
+    "@types/yauzl": "^3.4.0",
+    "eslint": "^10.5.0",
+    "typescript": "^6.0.3"
   }
 }
